@@ -1,0 +1,70 @@
+{% extends 'pages/base.html' %} {% block content %}
+<section>
+  <hgroup>
+    <h1>About</h1>
+    <h2>
+      <b>mirrorss</b> is an open-source web application allowing you to
+      combine multiple RSS/Atom feeds
+    </h2>
+  </hgroup>
+</section>
+<section>
+  <h2>Features</h2>
+  <p>
+    🌐 <b>One Link to Rule Them All</b><br />
+    Simplify your life and access all your favorite content through a single
+    unified feed. No more jumping between countless sources or losing track of
+    important updates.
+  </p>
+  <p>
+    🔍 <b>Filtered to Perfection</b><br />
+    Take control of your feed with customizable keyword filters. Tailor your
+    content to match your interests, ensuring that only the most relevant
+    articles and updates make it to your consolidated feed.
+  </p>
+  <p>
+    🚀 <b>Limitless Possibilities</b><br />
+    With three cutting-edge compilation strategies at your disposal, the
+    possibilities are endless. Whether you prefer a comprehensive overview, a
+    random compilation or a balanced selection, Feedelity offers the flexibility
+    to cater to your needs.
+  </p>
+  <p>
+    💡 <b>Stay Ahead of the Curve</b><br />
+    Feedelity's item limiting and filtering capabilities ensure that you stay up
+    to date without feeling overwhelmed. Stay informed and inspired, without
+    drowning in a sea of information.
+  </p>
+  <p>
+    ✨ <b>Seamlessly Simple</b> <br />
+    Feedelity's user-friendly interface makes it a breeze to use. No technical
+    wizardry required – just a straightforward and intuitive experience for both
+    novices and tech-savvy users alike.
+  </p>
+  <hr />
+  <p style="margin-top: 30px">
+    Don't settle for fragmented feeds and missed opportunities. Experience the
+    future of content aggregation with Feedelity. Try it now and unlock a world
+    of content with a single click.
+  </p>
+</section>
+
+<section></section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  function buildURL(params) {
+    let url = new URL('http://streamrss.io/feed')
+    for (const key in Object.keys(params)) {
+      url.searchParams.append(key, params[key])
+    }
+    return url
+  }
+
+  function onInput() {
+    let params = {}
+    
+  }
+</script>
+{% endblock %}

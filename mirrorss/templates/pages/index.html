@@ -1,0 +1,187 @@
+{% extends 'pages/base.html' %} {% block content %}
+<section>
+  <hgroup>
+    <h1>mirro<i>rss</i></h1>
+    <h2>Unleash the Power of Combined RSS Feeds with a Single Link</h2>
+  </hgroup>
+
+  <p>
+    Revolutionize your content consumption with <b>mirrorss</b>, the ultimate RSS feed
+    fusion application. Written in Python for seamless performance, <b>mirrorss</b>
+    empowers you to effortlessly merge multiple feeds into one captivating
+    stream. Say goodbye to the hassle of juggling various sources and embrace
+    the simplicity of a <i>single, dynamic link</i>.
+  </p>
+</section>
+
+<article>
+  <form id="form" method="get" action="./feed">
+    <label for="title">
+      <b>Title</b>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        placeholder="My stream"
+        oninput="displayURL()"
+        class="field"
+        required
+      />
+    </label>
+
+    <label for="sources">
+      <b>Sources</b>
+      <span id="source-count" style="color: var(--primary)"></span>
+      <textarea
+        id="sources"
+        name="sources"
+        placeholder="https://other.example.com/rss.xml&#10;https://another.example.com/rss.xml"
+        oninput="displayURL()"
+        maxlength="1000"
+        class="field"
+      ></textarea>
+      <small>List of source feed URLs</small>
+    </label>
+
+    <details>
+      <summary>
+        <b>Advanced</b>
+      </summary>
+      <label for="description">
+        Description
+        <input
+          type="text"
+          id="description"
+          name="description"
+          placeholder="Lorem ipsum dolor sit amet"
+          oninput="displayURL()"
+          class="field"
+        />
+      </label>
+
+      <div class="grid">
+        <label for="link">
+          Link
+          <input
+            type="url"
+            id="link"
+            name="link"
+            placeholder="https://example.com/blog"
+            oninput="displayURL()"
+            class="field"
+          />
+        </label>
+  
+        <label for="image">
+          Image
+          <input
+            type="url"
+            id="image"
+            name="image"
+            placeholder="https://example.com/logo.png"
+            oninput="displayURL()"
+            class="field"
+          />
+        </label>
+      </div>
+  
+      <label for="keywords">
+        Keywords
+        <textarea
+          id="keywords"
+          name="keywords"
+          placeholder="lorem&#10;ipsum"
+          oninput="displayURL()"
+          class="field"
+        ></textarea>
+        <small>Used for searching/filtering feed items</small>
+      </label>
+  
+      <div class="grid">
+        <label for="limit">
+          Limit
+          <input id="limit" type="number" name="limit" value="10" min="10" max="100" oninput="displayURL()" class="field" />
+        </label>
+        <label for="order">
+          Order
+          <select id="order" name="order" class="field" oninput="displayURL()">
+            <option value="desc" selected>Recent → Past</option>
+            <option value="asc">Past → Recent</option>
+          </select>
+        </label>
+      </div>
+    </details>
+    
+  </form>
+  <footer>
+    <section>
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <div>Use this link to access your mirror</div>
+        <button id="copy-btn" class="secondary outline" onclick="copyToClipboard()" style="width: 15%">
+          copy
+        </button>
+        <div id="copy-success" style="display: none">
+          <ins>Copied!</ins>
+        </div>
+      </div>
+    </section>
+    <small>
+      <a href="https://mirrorss.io/feed" id="url">https://mirrorss.io/feed</a>
+    </small>
+  </footer>
+</article>
+
+<section></section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  function buildURL(params) {
+    let url = new URL('http://127.0.0.1:5000/feed')
+    for (const key of Object.keys(params)) {
+      url.searchParams.append(key, params[key])
+    }
+    return url
+  }
+
+  function displayURL() {
+    let params = {};
+    const fields = document.getElementsByClassName('field');
+    for (const element of fields) {
+        if (!!element.value)
+          if (element.tagName === "textarea")
+            params[element.name] = element.innerText;
+          else
+            params[element.name] = element.value;
+    }
+    const url = buildURL(params);
+    const urlElement = document.getElementById('url');
+    urlElement.innerText = url;
+    urlElement.setAttribute('href', url);
+    const sourceCountElement = document.getElementById('source-count');
+    sourceCountElement.innerText = params.sources.split('\n').reduce((a, x) => new URL(x) ? a + 1 : a, 0);
+  }
+
+  function resetCopyBtn() {
+    let copyBtn = document.getElementById('copy-btn');
+    let copySuccess = document.getElementById('copy-success');
+    copyBtn.style.display = 'inline';
+    copySuccess.style.display = 'none';
+  }
+
+  function copyToClipboard() {
+    let link = document.getElementById('url');
+    navigator.clipboard.writeText(link.innerText);
+    let copyBtn = document.getElementById('copy-btn');
+    let copySuccess = document.getElementById('copy-success');
+    copyBtn.style.display = 'none';
+    copySuccess.style.display = 'inline';
+    setTimeout(resetCopyBtn, 3000);
+  }
+
+  document.onload = () => {
+    displayURL();
+    resetCopyBtn();
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %} {% block metas %}
+    <meta charset="utf-8" />
+    {% endblock metas %}
+
+    <title>{% block title %}mirrorss{% endblock %}</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+    {% block styles %}
+    <!-- Custom CSS 
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='assets/css/main.css' ) }}"
+    />
+    -->
+    <!-- 3rd party CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
+    />
+    {% endblock styles %} {% endblock head %}
+  </head>
+  <body class="container">
+    <nav>
+      <ul>
+        <li>
+          <a href="/">
+            <b>mirro<i>rss</i></b>
+          </a>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+        </li>
+      </ul>
+    </nav>
+    <main>{% block content %}{% endblock %}</main>
+    <footer>
+      {% block footer %}
+      <small>
+        &copy; 2023
+        <a
+          href="https://github.com/maximiliancw"
+          title="Published by maximiliancw on GitHub"
+        >
+          maximiliancw
+        </a>
+      </small>
+      {% endblock %}
+    </footer>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

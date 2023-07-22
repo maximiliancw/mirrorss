@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>{{ feed.title }}</title>
+    {% if link %}
+        <link href="{{ link }}" />
+    {% endif %}
+    <updated>{{ feed.published }}</updated>
+    {% for item in feed.items %} 
+    <entry>
+        <title>{{ item.title }}</title>
+        <link href="{{ item.link }}" />
+        <id>{{ item.guid }}</id>
+        <updated>{{ item.published }}</updated>
+        <summary>{{ item.description }}</summary>
+    </entry> {% endfor %} 
+</feed>
