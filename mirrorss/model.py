@@ -43,14 +43,15 @@ class Mirror(object):
     def items(self):
         # Note: Entries without <pubDate> will be ignored!
         entries = [entry for source in self.sources for entry in source.entries if entry.published_parsed]
-        sorted_items = sorted(entries, key=lambda entry: mktime(entry.published_parsed), reverse=self.reversed)
-        filtered_items = [] if len(self.keywords) else sorted_items
-        for item in sorted_items:
-            s = json.dumps({k: v for k, v in item.items()})
-            if any([k.lower().strip() in s.lower() for k in self.keywords]):
-                filtered_items.append(item)
-
-        return filtered_items[:self.limit]
+        entries = sorted(entries, key=lambda entry: mktime(entry.published_parsed), reverse=self.reversed)
+        if len(self.keywords) > 0:
+            filtered = []
+            for item in entries:
+                s = json.dumps({k: v for k, v in item.items()})
+                if any([k.lower().strip() in s.lower() for k in self.keywords]):
+                    filtered.append(item)
+            entries = filtered
+        return entries[:self.limit]
     
     def load(self, sources: List[str]) -> List[FeedParserDict]:
         cache = Cache("cache")
