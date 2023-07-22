@@ -135,30 +135,23 @@
     </details>
   </form>
   <footer>
-    <section>
-      <div
-        style="
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        "
-      >
-        <div>Use this link to access your mirror</div>
-        <button
-          id="copy-btn"
-          class="secondary outline"
-          onclick="copyToClipboard()"
-          style="width: 15%"
-        >
-          copy
-        </button>
-        <div id="copy-success" style="display: none">
-          <ins>Copied!</ins>
-        </div>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 50px;
+      "
+    >
+      <div>Use this link to access your feed</div>
+      <div id="copy-success" style="display: none">
+        <ins>Copied!</ins>
       </div>
-    </section>
-    <small>
-      <a href="https://mirrorss.io/feed" id="url">https://mirrorss.io/feed</a>
+    </div>
+    <small data-tooltip="Click to copy">
+      <a id="url" href="#url" onclick="copyToClipboard(this)">
+        <code>/feed?limit=10&order=desc</code>
+      </a>
     </small>
   </footer>
 </article>
@@ -188,29 +181,20 @@
     }
     const url = buildURL(params);
     const urlElement = document.getElementById("url");
-    urlElement.innerText = url;
-    urlElement.setAttribute("href", url);
+    urlElement.innerHTML = `<code>${url.pathname}${url.search}</code>`;
     const sourceCountElement = document.getElementById("source-count");
     sourceCountElement.innerText = params.sources
       .split("\n")
       .reduce((a, x) => (new URL(x) ? a + 1 : a), 0);
   }
 
-  function resetCopyBtn() {
-    let copyBtn = document.getElementById("copy-btn");
-    let copySuccess = document.getElementById("copy-success");
-    copyBtn.style.display = "inline";
-    copySuccess.style.display = "none";
-  }
-
   function copyToClipboard() {
     let link = document.getElementById("url");
-    navigator.clipboard.writeText(link.innerText);
-    let copyBtn = document.getElementById("copy-btn");
+    const url = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${link.innerText}`
+    navigator.clipboard.writeText(url);
     let copySuccess = document.getElementById("copy-success");
-    copyBtn.style.display = "none";
     copySuccess.style.display = "inline";
-    setTimeout(resetCopyBtn, 3000);
+    setTimeout(() => copySuccess.style.display = "none", 3000);
   }
 
   document.onload = () => {

@@ -44,7 +44,7 @@
       </ul>
     </nav>
     <main>{% block content %}{% endblock %}</main>
-    <footer>
+    <footer style="display: flex; justify-content: space-between">
       {% block footer %}
       <small>
         &copy; 2023
@@ -54,6 +54,9 @@
         >
           maximiliancw
         </a>
+      </small>
+      <small>
+        <a href="https://github.com/maximiliancw/mirrorss/LICENSE">MIT License</a>
       </small>
       {% endblock %}
     </footer>
