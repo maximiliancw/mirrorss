@@ -1,10 +1,11 @@
 from datetime import datetime
 from time import mktime
 from typing import List
+from diskcache import Index, Cache
 
 from feedparser import FeedParserDict, parse
 
-from mirrorss.helpers import is_valid_url
+from mirrorss.helpers import is_valid_url, less_than_1h_ago
 
 class Mirror(object):
 
@@ -18,12 +19,8 @@ class Mirror(object):
         keywords: List[str] = [],
         limit: int = 10,
         order: str = "desc"
-    ):
-        for source in sources:
-            if not is_valid_url(source):
-                raise ValueError(f"Invalid URL found in param 'sources': {source}")
-        
-        self.sources: List[FeedParserDict] = [parse(source) for source in sources]
+    ):            
+        self.sources: List[FeedParserDict] = self.load(sources)
         self.title = title
         self.description = description
 
@@ -45,3 +42,27 @@ class Mirror(object):
         entries = [entry for source in self.sources for entry in source.entries]
         sorted_entries = sorted(entries, key=lambda entry: mktime(entry.published_parsed), reverse=self.reversed)
         return sorted_entries[:self.limit]
+    
+    def load(self, sources: List[str]) -> List[FeedParserDict]:
+        cache = Cache("cache")
+
+        for url in sources:
+            if not is_valid_url(url):
+                raise ValueError(f"Invalid URL found in param 'sources': {url}")
+            
+            if url in cache:
+                saved, timestamp = cache.get(url, expire_time=True)
+                if less_than_1h_ago(timestamp):
+                    yield saved
+                    continue
+
+                update = parse(url, etag=saved.etag, modified=saved.modified)
+                if update.status == 304:
+                    yield saved
+                else:
+                    cache.set(url, update, expire=24*60*60)
+                    yield update
+            else:          
+                src = parse(url)
+                cache.set(url, src, expire=24*60*60)
+                yield src
