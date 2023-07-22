@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from time import mktime
 from typing import List
 from diskcache import Index, Cache
@@ -19,7 +20,8 @@ class Mirror(object):
         keywords: List[str] = [],
         limit: int = 10,
         order: str = "desc"
-    ):            
+    ):          
+        sources = list(map(lambda s: s.strip(), sources))
         self.sources: List[FeedParserDict] = self.load(sources)
         self.title = title
         self.description = description
@@ -39,9 +41,16 @@ class Mirror(object):
         
     @property
     def items(self):
-        entries = [entry for source in self.sources for entry in source.entries]
-        sorted_entries = sorted(entries, key=lambda entry: mktime(entry.published_parsed), reverse=self.reversed)
-        return sorted_entries[:self.limit]
+        # Note: Entries without <pubDate> will be ignored!
+        entries = [entry for source in self.sources for entry in source.entries if entry.published_parsed]
+        sorted_items = sorted(entries, key=lambda entry: mktime(entry.published_parsed), reverse=self.reversed)
+        filtered_items = []
+        for item in sorted_items:
+            s = json.dumps({k: v for k, v in item.items()})
+            if any([k.lower().strip() in s.lower() for k in self.keywords]):
+                filtered_items.append(item)
+
+        return filtered_items[:self.limit]
     
     def load(self, sources: List[str]) -> List[FeedParserDict]:
         cache = Cache("cache")
@@ -52,9 +61,8 @@ class Mirror(object):
                     raise ValueError(f"Invalid URL found in param 'sources': {url}")
                 
                 if url in cache:
-                    saved, timestamp = cache.get(url, expire_time=True)
-                    ts = timestamp - expiry
-                    if less_than_1h_ago(ts):
+                    saved, expire = cache.get(url, expire_time=True)
+                    if less_than_1h_ago(expire - expiry):
                         yield saved
                         continue
 
