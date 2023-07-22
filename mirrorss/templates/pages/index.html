@@ -183,9 +183,17 @@
     const urlElement = document.getElementById("url");
     urlElement.innerHTML = `<code>${url.pathname}${url.search}</code>`;
     const sourceCountElement = document.getElementById("source-count");
-    sourceCountElement.innerText = params.sources
-      .split("\n")
-      .reduce((a, x) => (new URL(x) ? a + 1 : a), 0);
+    if (!!params.sources) {
+      try {
+        sourceCountElement.innerText = params
+          .sources
+          .split("\n")
+          .reduce((a, x) => (new URL(x) ? a + 1 : a), 0);
+      } catch(e) {
+        
+      }
+      
+    }
   }
 
   function copyToClipboard() {
