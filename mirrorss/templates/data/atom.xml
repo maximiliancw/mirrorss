@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>{{ feed.title }}</title>
-    {% if link %}
-        <link href="{{ link }}" />
-    {% endif %}
+    <link href="{{ feed.link or 'https://mirrorss.pythonanywhere.com/' }}" />
     <updated>{{ feed.published }}</updated>
     {% for item in feed.items %} 
     <entry>
