@@ -144,12 +144,9 @@
       "
     >
       <div>Use this link to access your feed</div>
-      <div id="copy-success" style="display: none">
-        <ins>Copied!</ins>
-      </div>
     </div>
-    <small data-tooltip="Click to copy">
-      <a id="url" href="#url" onclick="copyToClipboard()" style="overflow: none; word-break:break-all"></a>
+    <small>
+      <a id="url" href="" target="_blank" style="overflow: none; word-break:break-all"></a>
     </small>
   </footer>
 </article>
@@ -182,6 +179,7 @@
     const url = buildURL(params);
     const urlElement = document.getElementById("url");
     urlElement.innerHTML = `<code>${url.pathname}${url.search}</code>`;
+    urlElement.setAttribute('href', url.toString())
     const sourceCountElement = document.getElementById("source-count");
     if (!!params.sources) {
       try {
@@ -193,15 +191,6 @@
         
       }
     }
-  }
-
-  function copyToClipboard() {
-    let link = document.getElementById("url");
-    const url = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${link.innerText}`
-    navigator.clipboard.writeText(url);
-    let copySuccess = document.getElementById("copy-success");
-    copySuccess.style.display = "inline";
-    setTimeout(() => copySuccess.style.display = "none", 3000);
   }
 
   displayURL();
