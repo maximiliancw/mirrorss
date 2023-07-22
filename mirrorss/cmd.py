@@ -40,10 +40,13 @@ def clear(ctx):
 def dump(ctx, export: bool):
     cache: Cache = ctx.obj["cache"]
     if not export:
-        pprint(cache.__dict__)
+        for key in cache:
+            pprint(cache[key])
     else:
         folder = os.path.join(os.getcwd(), "exports")
         filename = f"{datetime.today().isoformat()}.json"
         path = os.path.join(folder, filename)
+        os.makedirs(folder, exist_ok=True)
         with open(path, "w") as f:
-            json.dump(cache, f, indent=4)
+            data = {key: cache[key] for key in cache}
+            json.dump(data, f, indent=4)
