@@ -1,4 +1,6 @@
-{% extends 'pages/base.html' %} {% block content %}
+{% extends 'pages/base.html' %} 
+{% block title %}Home{% endblock %}
+{% block content %}
 <section>
   <hgroup>
     <h1>mirro<i>rss</i></h1>
@@ -22,11 +24,12 @@
         type="text"
         id="title"
         name="title"
-        placeholder="My stream"
+        placeholder="My custom feed"
         oninput="displayURL()"
         class="field"
         value="{{ q.get('title', '') }}"
-        required
+        required="true"
+        aria-required="true"
       />
     </label>
 
@@ -40,6 +43,7 @@
         oninput="displayURL()"
         maxlength="1000"
         class="field"
+        aria-required
       >{{ q.get("sources") or "" }}</textarea>
       <small>List of source feed URLs</small>
     </label>

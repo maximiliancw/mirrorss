@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html>
   <head>
-    {% block head %} {% block metas %}
+    {% block head %}
     <meta charset="utf-8" />
-    {% endblock metas %}
+    <meta property="og:title" content="mirrorss" />
+    <meta property="og:description" content="Unleash the Power of Combined RSS Feeds with a Single Link" />
+    <meta property="og:image" content="{{ url_for('static', filename='banner.png') }}" />
 
-    <title>{% block title %}mirrorss{% endblock %}</title>
+    <title>mirrorss | {% block title %}{% endblock %}</title>
     <link
       rel="icon"
       type="image/x-icon"
       href="{{ url_for('static', filename='favicon.ico') }}"
     />
     {% block styles %}
-    <!-- Custom CSS 
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='assets/css/main.css' ) }}"
-    />
-    -->
     <!-- 3rd party CSS -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
     />
-    {% endblock styles %} {% endblock head %}
+    {% endblock styles %}
+    {% endblock head %}
   </head>
   <body class="container">
     <nav>
       <ul>
         <li>
           <a href="/">
+            <img src="/static/favicon.ico" alt="mirrorss" />
             <b>mirro<i>rss</i></b>
           </a>
         </li>
       </ul>
       <ul>
         <li>
-          <a href="/">Home</a>
+          <a href="/about">About</a>
         </li>
         <li>
-          <li>
-            <a href="/about">About</a>
-          </li>
+          <a href="https://maximiliancw.github.io/mirrorss" target="_blank">
+            Docs
+          </a>
         </li>
       </ul>
     </nav>
