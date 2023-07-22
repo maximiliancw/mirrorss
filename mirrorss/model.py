@@ -2,11 +2,11 @@ from datetime import datetime
 import json
 from time import mktime
 from typing import List
-from diskcache import Index, Cache
+from diskcache import Cache
 
 from feedparser import FeedParserDict, parse
 
-from mirrorss.helpers import is_valid_url, less_than_1h_ago
+from mirrorss.helpers import is_valid_url, less_than_x_hours_ago
 
 class Mirror(object):
 
@@ -62,7 +62,7 @@ class Mirror(object):
                 
                 if url in cache:
                     saved, expire = cache.get(url, expire_time=True)
-                    if less_than_1h_ago(expire - expiry):
+                    if less_than_x_hours_ago(expire - expiry, hours=1):
                         yield saved
                         continue
 
