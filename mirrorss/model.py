@@ -3,10 +3,10 @@ import json
 from time import mktime
 from typing import List
 from diskcache import Cache
-
+from random_user_agent.user_agent import UserAgent
 from feedparser import FeedParserDict, parse
 
-from mirrorss.helpers import is_valid_url, less_than_x_hours_ago
+from mirrorss.helpers import get_random_user_agent, is_valid_url, less_than_x_hours_ago
 
 class Mirror(object):
 
@@ -56,6 +56,7 @@ class Mirror(object):
     def load(self, sources: List[str]) -> List[FeedParserDict]:
         cache = Cache("cache")
         expiry = 365*24*60*60
+        user_agent = get_random_user_agent()
         try:
             for url in sources:
                 if not is_valid_url(url):
@@ -67,7 +68,12 @@ class Mirror(object):
                         yield saved
                         continue
 
-                    update = parse(url, etag=saved.etag, modified=saved.modified)
+                    update = parse(
+                        url,
+                        etag=saved.etag,
+                        modified=saved.modified,
+                        agent=user_agent
+                    )
                     if update.status == 304:
                         yield saved
                         continue
@@ -75,7 +81,7 @@ class Mirror(object):
                     cache.set(url, update, expire=expiry)
                     yield update
                 else:          
-                    src = parse(url)
+                    src = parse(url, agent=user_agent)
                     cache.set(url, src, expire=expiry)
                     yield src
         except Exception as e:
