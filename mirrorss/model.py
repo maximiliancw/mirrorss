@@ -44,7 +44,7 @@ class Mirror(object):
         # Note: Entries without <pubDate> will be ignored!
         entries = [entry for source in self.sources for entry in source.entries if entry.published_parsed]
         sorted_items = sorted(entries, key=lambda entry: mktime(entry.published_parsed), reverse=self.reversed)
-        filtered_items = []
+        filtered_items = [] if len(self.keywords) else sorted_items
         for item in sorted_items:
             s = json.dumps({k: v for k, v in item.items()})
             if any([k.lower().strip() in s.lower() for k in self.keywords]):

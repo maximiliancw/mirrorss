@@ -40,7 +40,7 @@
         oninput="displayURL()"
         maxlength="1000"
         class="field"
-      >{{ q.get("sources")|string }}</textarea>
+      >{{ q.get("sources") or "" }}</textarea>
       <small>List of source feed URLs</small>
     </label>
 
@@ -97,7 +97,7 @@
           placeholder="lorem&#10;ipsum"
           oninput="displayURL()"
           class="field"
-        >{{ q.get("keywords")|string }}</textarea>
+        >{{ q.get("keywords") or "" }}</textarea>
         <small>Used for searching/filtering feed items</small>
       </label>
 
@@ -158,12 +158,12 @@
     </small>
   </footer>
 </article>
+{% endblock %} 
 
-<section></section>
-{% endblock %} {% block scripts %}
+{% block scripts %}
 <script type="text/javascript">
   function buildURL(params) {
-    let url = new URL("http://127.0.0.1:5000/feed");
+    let url = new URL(window.location.protocol + "//" + window.location.host + "/feed");
     for (const key of Object.keys(params)) {
       url.searchParams.append(key, params[key]);
     }
