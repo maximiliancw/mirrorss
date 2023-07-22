@@ -6,11 +6,11 @@
   </hgroup>
 
   <p>
-    Revolutionize your content consumption with <b>mirrorss</b>, the ultimate RSS feed
-    fusion application. Written in Python for seamless performance, <b>mirrorss</b>
-    empowers you to effortlessly merge multiple feeds into one captivating
-    stream. Say goodbye to the hassle of juggling various sources and embrace
-    the simplicity of a <i>single, dynamic link</i>.
+    Revolutionize your content consumption with <b>mirrorss</b>, the ultimate
+    RSS feed fusion application. Written in Python for seamless performance,
+    <b>mirrorss</b> empowers you to effortlessly merge multiple feeds into one
+    captivating stream. Say goodbye to the hassle of juggling various sources
+    and embrace the simplicity of a <i>single, dynamic link</i>.
   </p>
 </section>
 
@@ -25,6 +25,7 @@
         placeholder="My stream"
         oninput="displayURL()"
         class="field"
+        value="{{ q.get('title', '') }}"
         required
       />
     </label>
@@ -39,7 +40,9 @@
         oninput="displayURL()"
         maxlength="1000"
         class="field"
-      ></textarea>
+      >
+      {{ "\n".join(q.get('sources', [])) }}
+      </textarea>
       <small>List of source feed URLs</small>
     </label>
 
@@ -55,6 +58,7 @@
           name="description"
           placeholder="Lorem ipsum dolor sit amet"
           oninput="displayURL()"
+          value="{{ q.get('description', '') }}"
           class="field"
         />
       </label>
@@ -68,10 +72,11 @@
             name="link"
             placeholder="https://example.com/blog"
             oninput="displayURL()"
+            value="{{ q.get('link', '') }}"
             class="field"
           />
         </label>
-  
+
         <label for="image">
           Image
           <input
@@ -80,11 +85,12 @@
             name="image"
             placeholder="https://example.com/logo.png"
             oninput="displayURL()"
+            value="{{ q.get('image', '') }}"
             class="field"
           />
         </label>
       </div>
-  
+
       <label for="keywords">
         Keywords
         <textarea
@@ -93,31 +99,57 @@
           placeholder="lorem&#10;ipsum"
           oninput="displayURL()"
           class="field"
-        ></textarea>
+        >
+        {{ "\n".join(q.get('keywords', [])) }}
+        </textarea>
         <small>Used for searching/filtering feed items</small>
       </label>
-  
+
       <div class="grid">
         <label for="limit">
           Limit
-          <input id="limit" type="number" name="limit" value="10" min="10" max="100" oninput="displayURL()" class="field" />
+          <input
+            id="limit"
+            type="number"
+            name="limit"
+            value="10"
+            min="10"
+            max="100"
+            oninput="displayURL()"
+            value="{{ q.get('limit', 10) }}"
+            class="field"
+          />
         </label>
         <label for="order">
           Order
           <select id="order" name="order" class="field" oninput="displayURL()">
-            <option value="desc" selected>Recent → Past</option>
-            <option value="asc">Past → Recent</option>
+            <option value="desc" {% if q.get("order", "desc") == "desc" %}selected{% endif %}>
+              Recent → Past
+            </option>
+            <option value="asc" {% if q.get("order", "desc") == "asc" %}selected{% endif %}>
+              Past → Recent
+            </option>
           </select>
         </label>
       </div>
     </details>
-    
   </form>
   <footer>
     <section>
-      <div style="display: flex; justify-content: space-between; align-items: center">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
         <div>Use this link to access your mirror</div>
-        <button id="copy-btn" class="secondary outline" onclick="copyToClipboard()" style="width: 15%">
+        <button
+          id="copy-btn"
+          class="secondary outline"
+          onclick="copyToClipboard()"
+          style="width: 15%"
+        >
           copy
         </button>
         <div id="copy-success" style="display: none">
@@ -132,56 +164,58 @@
 </article>
 
 <section></section>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script type="text/javascript">
   function buildURL(params) {
-    let url = new URL('http://127.0.0.1:5000/feed')
+    let url = new URL("http://127.0.0.1:5000/feed");
     for (const key of Object.keys(params)) {
-      url.searchParams.append(key, params[key])
+      url.searchParams.append(key, params[key]);
     }
-    return url
+    return url;
   }
 
   function displayURL() {
     let params = {};
-    const fields = document.getElementsByClassName('field');
+    const fields = document.getElementsByClassName("field");
     for (const element of fields) {
-        if (!!element.value)
-          if (element.tagName === "textarea")
-            params[element.name] = element.innerText;
-          else
-            params[element.name] = element.value;
+      if (!!element.value) {
+        if (element.tagName === "textarea") {
+          params[element.name] = element.innerText;
+        } else {
+          params[element.name] = element.value;
+        }
+      }
     }
     const url = buildURL(params);
-    const urlElement = document.getElementById('url');
+    const urlElement = document.getElementById("url");
     urlElement.innerText = url;
-    urlElement.setAttribute('href', url);
-    const sourceCountElement = document.getElementById('source-count');
-    sourceCountElement.innerText = params.sources.split('\n').reduce((a, x) => new URL(x) ? a + 1 : a, 0);
+    urlElement.setAttribute("href", url);
+    const sourceCountElement = document.getElementById("source-count");
+    sourceCountElement.innerText = params.sources
+      .split("\n")
+      .reduce((a, x) => (new URL(x) ? a + 1 : a), 0);
   }
 
   function resetCopyBtn() {
-    let copyBtn = document.getElementById('copy-btn');
-    let copySuccess = document.getElementById('copy-success');
-    copyBtn.style.display = 'inline';
-    copySuccess.style.display = 'none';
+    let copyBtn = document.getElementById("copy-btn");
+    let copySuccess = document.getElementById("copy-success");
+    copyBtn.style.display = "inline";
+    copySuccess.style.display = "none";
   }
 
   function copyToClipboard() {
-    let link = document.getElementById('url');
+    let link = document.getElementById("url");
     navigator.clipboard.writeText(link.innerText);
-    let copyBtn = document.getElementById('copy-btn');
-    let copySuccess = document.getElementById('copy-success');
-    copyBtn.style.display = 'none';
-    copySuccess.style.display = 'inline';
+    let copyBtn = document.getElementById("copy-btn");
+    let copySuccess = document.getElementById("copy-success");
+    copyBtn.style.display = "none";
+    copySuccess.style.display = "inline";
     setTimeout(resetCopyBtn, 3000);
   }
 
   document.onload = () => {
     displayURL();
     resetCopyBtn();
-  }
+  };
 </script>
 {% endblock %}

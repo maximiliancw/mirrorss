@@ -10,7 +10,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'fpiouafhreu9ghqp4')
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('pages/index.html')
+    return render_template('pages/index.html', q=request.args)
 
 @app.route('/about', methods=['GET'])
 def about():
