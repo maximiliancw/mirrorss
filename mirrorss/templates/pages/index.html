@@ -149,9 +149,7 @@
       </div>
     </div>
     <small data-tooltip="Click to copy">
-      <a id="url" href="#url" onclick="copyToClipboard(this)">
-        <code>/feed?limit=10&order=desc</code>
-      </a>
+      <a id="url" href="#url" onclick="copyToClipboard()" style="overflow: none; word-break:break-all"></a>
     </small>
   </footer>
 </article>
@@ -168,14 +166,16 @@
   }
 
   function displayURL() {
-    let params = {};
-    const fields = document.getElementsByClassName("field");
-    for (const element of fields) {
-      if (!!element.value) {
-        if (element.tagName === "textarea") {
-          params[element.name] = element.innerText;
-        } else {
-          params[element.name] = element.value;
+    let params = {{ q|tojson }};
+    if (!params.length) {
+      const fields = document.getElementsByClassName("field");
+      for (const element of fields) {
+        if (!!element.value || !!element.innerText) {
+          if (element.tagName === "textarea") {
+            params[element.name] = element.innerText;
+          } else {
+            params[element.name] = element.value;
+          }
         }
       }
     }
@@ -192,7 +192,6 @@
       } catch(e) {
         
       }
-      
     }
   }
 
@@ -205,9 +204,6 @@
     setTimeout(() => copySuccess.style.display = "none", 3000);
   }
 
-  document.onload = () => {
-    displayURL();
-    resetCopyBtn();
-  };
+  displayURL();
 </script>
 {% endblock %}
