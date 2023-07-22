@@ -8,7 +8,9 @@
   <image>
     <link>{{ feed.link or "https://mirrorss.pythonanywhere.com/" }}</link>
     <title>{{ feed.title }}</title>
-    <url>https://mirrorss.pythonanywhere.com/static/banner.png</url>
+    <url>
+      {{ feed.image or "https://mirrorss.pythonanywhere.com/static/banner.png" }}
+    </url>
   </image>
   {% for item in feed.items %}
   <item>
