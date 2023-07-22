@@ -40,9 +40,7 @@
         oninput="displayURL()"
         maxlength="1000"
         class="field"
-      >
-      {{ "\n".join(q.get('sources', [])) }}
-      </textarea>
+      >{{ q.get("sources")|string }}</textarea>
       <small>List of source feed URLs</small>
     </label>
 
@@ -99,9 +97,7 @@
           placeholder="lorem&#10;ipsum"
           oninput="displayURL()"
           class="field"
-        >
-        {{ "\n".join(q.get('keywords', [])) }}
-        </textarea>
+        >{{ q.get("keywords")|string }}</textarea>
         <small>Used for searching/filtering feed items</small>
       </label>
 

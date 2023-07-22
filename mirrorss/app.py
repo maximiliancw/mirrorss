@@ -1,4 +1,5 @@
 import os
+from urllib.parse import unquote
 from flask import Flask, Response, render_template, request
 
 from mirrorss.model import Mirror
@@ -10,7 +11,8 @@ app.secret_key = os.getenv('SECRET_KEY', 'fpiouafhreu9ghqp4')
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('pages/index.html', q=request.args)
+    query = {k: unquote(v) for k, v in request.args.items()}
+    return render_template('pages/index.html', q=query)
 
 @app.route('/about', methods=['GET'])
 def about():
