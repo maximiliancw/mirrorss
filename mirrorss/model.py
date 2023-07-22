@@ -45,6 +45,7 @@ class Mirror(object):
     
     def load(self, sources: List[str]) -> List[FeedParserDict]:
         cache = Cache("cache")
+        expiry = 365*24*60*60
         try:
             for url in sources:
                 if not is_valid_url(url):
@@ -52,7 +53,8 @@ class Mirror(object):
                 
                 if url in cache:
                     saved, timestamp = cache.get(url, expire_time=True)
-                    if less_than_1h_ago(timestamp):
+                    ts = timestamp - expiry
+                    if less_than_1h_ago(ts):
                         yield saved
                         continue
 
@@ -61,11 +63,11 @@ class Mirror(object):
                         yield saved
                         continue
                     
-                    cache.set(url, update, expire=24*60*60)
+                    cache.set(url, update, expire=expiry)
                     yield update
                 else:          
                     src = parse(url)
-                    cache.set(url, src, expire=24*60*60)
+                    cache.set(url, src, expire=expiry)
                     yield src
         except Exception as e:
             raise e
