@@ -45,24 +45,29 @@ class Mirror(object):
     
     def load(self, sources: List[str]) -> List[FeedParserDict]:
         cache = Cache("cache")
+        try:
+            for url in sources:
+                if not is_valid_url(url):
+                    raise ValueError(f"Invalid URL found in param 'sources': {url}")
+                
+                if url in cache:
+                    saved, timestamp = cache.get(url, expire_time=True)
+                    if less_than_1h_ago(timestamp):
+                        yield saved
+                        continue
 
-        for url in sources:
-            if not is_valid_url(url):
-                raise ValueError(f"Invalid URL found in param 'sources': {url}")
-            
-            if url in cache:
-                saved, timestamp = cache.get(url, expire_time=True)
-                if less_than_1h_ago(timestamp):
-                    yield saved
-                    continue
-
-                update = parse(url, etag=saved.etag, modified=saved.modified)
-                if update.status == 304:
-                    yield saved
-                else:
+                    update = parse(url, etag=saved.etag, modified=saved.modified)
+                    if update.status == 304:
+                        yield saved
+                        continue
+                    
                     cache.set(url, update, expire=24*60*60)
                     yield update
-            else:          
-                src = parse(url)
-                cache.set(url, src, expire=24*60*60)
-                yield src
+                else:          
+                    src = parse(url)
+                    cache.set(url, src, expire=24*60*60)
+                    yield src
+        except Exception as e:
+            raise e
+        finally:
+            cache.close()
