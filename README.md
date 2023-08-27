@@ -8,8 +8,36 @@ Built with:
 - feedparser
 - DiskCache
 
-## Demo / Live App
-Please visit: [https://mirrorss.pythonanywhere.com/](https://mirrorss.pythonanywhere.com/)
+## Installation
+
+### Download from PyPI
+```bash
+pip install mirrorss
+```
+or
+```bash
+poetry add mirrorss
+```
+
+### Download source
+```bash
+git clone https://github.com/maximiliancw/mirrorss.git
+cd mirrorss
+pip install .
+# or poetry install
+```
+
+## Deployment
+
+### Deploy via CLI
+```bash
+mirrorss run
+```
+
+> Note: Use `mirrorss run --debug` to start the app in debug mode
+
+### Deploy via WSGI
+Please read Flask's documentation regarding deployment.
 
 ## License
 MIT License
